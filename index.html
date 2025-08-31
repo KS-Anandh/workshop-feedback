@@ -133,6 +133,12 @@
       <label>Email</label>
       <input type="email" name="email" placeholder="Enter your email" required />
 
+      <!-- Phone -->
+      <label>Phone Number</label>
+      <input type="tel" name="phone" placeholder="Enter your 10-digit phone number" 
+             pattern="[0-9]{10}" maxlength="10" required 
+             oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
+
       <!-- Feedback -->
       <label>Your Feedback</label>
       <textarea name="feedback" rows="4" placeholder="How was your learning experience?" required></textarea>
@@ -190,11 +196,7 @@
 
     // Show/hide mode preference
     interested.addEventListener('change', () => {
-      if (interested.value === "Yes") {
-        modeBox.style.display = "block";
-      } else {
-        modeBox.style.display = "none";
-      }
+      modeBox.style.display = (interested.value === "Yes") ? "block" : "none";
     });
 
     // Success message after submission
