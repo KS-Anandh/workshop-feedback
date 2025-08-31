@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExpressSpark Feedback Form</title>
+  <style>
+    /* ====== GLOBAL STYLES ====== */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* ====== CONTAINER ====== */
+    .container {
+      max-width: 650px;
+      width: 90%;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ====== HEADER ====== */
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      margin: 0;
+      color: #2c3e50;
+      font-size: 28px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 15px;
+      margin-top: 5px;
+    }
+
+    /* ====== FORM ELEMENTS ====== */
+    label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+      color: #333;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      box-sizing: border-box;
+      transition: 0.3s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    /* ====== BUTTON ====== */
+    button {
+      margin-top: 25px;
+      padding: 14px;
+      width: 100%;
+      background: #007bff;
+      border: none;
+      color: #fff;
+      font-size: 17px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    /* ====== RESPONSE MESSAGE ====== */
+    #responseMsg {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    /* Mobile-friendly */
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+      }
+      .header h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header">
+      <h1>ExpressSpark Feedback Form</h1>
+      <p>Stock Market Workshop – Share your thoughts & preferences</p>
+    </div>
+
+    <!-- FEEDBACK FORM -->
+    <form id="feedbackForm" action="https://formspree.io/f/xwpnbwrd" method="POST">
+      <!-- Name -->
+      <label>Your Name</label>
+      <input type="text" name="name" placeholder="Enter your full name" required />
+
+      <!-- Email -->
+      <label>Email</label>
+      <input type="email" name="email" placeholder="Enter your email" required />
+
+      <!-- Feedback -->
+      <label>Your Feedback</label>
+      <textarea name="feedback" rows="4" placeholder="How was your learning experience?" required></textarea>
+
+      <!-- Rating -->
+      <label>Rate the Workshop</label>
+      <select name="rating" required>
+        <option value="">-- Select --</option>
+        <option>⭐⭐⭐⭐⭐ Excellent</option>
+        <option>⭐⭐⭐⭐ Very Good</option>
+        <option>⭐⭐⭐ Good</option>
+        <option>⭐⭐ Fair</option>
+        <option>⭐ Poor</option>
+      </select>
+
+      <!-- Interested in advanced courses -->
+      <label>Would you like to join our advanced stock market courses?</label>
+      <select name="interested" id="interested" required>
+        <option value="">-- Select --</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+
+      <!-- Preferred mode (only if interested = Yes) -->
+      <div id="modeBox" style="display: none;">
+        <label>Preferred Mode</label>
+        <select name="mode">
+          <option value="">-- Select --</option>
+          <option>Online</option>
+          <option>Offline</option>
+        </select>
+      </div>
+
+      <!-- Updates -->
+      <label>Would you like updates on upcoming workshops?</label>
+      <select name="updates" required>
+        <option value="">-- Select --</option>
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+
+      <!-- Submit Button -->
+      <button type="submit">Submit Feedback</button>
+    </form>
+
+    <!-- Response Message -->
+    <p id="responseMsg"></p>
+  </div>
+
+  <script>
+    const form = document.getElementById('feedbackForm');
+    const interested = document.getElementById('interested');
+    const modeBox = document.getElementById('modeBox');
+    const responseMsg = document.getElementById('responseMsg');
+
+    // Show/hide mode preference
+    interested.addEventListener('change', () => {
+      if (interested.value === "Yes") {
+        modeBox.style.display = "block";
+      } else {
+        modeBox.style.display = "none";
+      }
+    });
+
+    // Success message after submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      responseMsg.textContent = "⏳ Submitting your feedback...";
+      responseMsg.style.color = "#333";
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: formData,
+          headers: { Accept: "application/json" }
+        });
+
+        if (response.ok) {
+          responseMsg.style.color = "green";
+          responseMsg.textContent = "✅ Thank you! Your feedback has been recorded.";
+          form.reset();
+          modeBox.style.display = "none";
+        } else {
+          responseMsg.style.color = "red";
+          responseMsg.textContent = "❌ Error submitting form. Please try again.";
+        }
+      } catch (err) {
+        responseMsg.style.color = "red";
+        responseMsg.textContent = "⚠ Network error. Please check your connection.";
+      }
+    });
+  </script>
+</body>
+</html>
